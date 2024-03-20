@@ -3,6 +3,7 @@ const helmet = require("helmet")
 const morgan = require("morgan")
 const dotenv = require("dotenv")
 const con = require("./utils/db")
+const cors = require("cors")
 const app = express()
 
 // configs
@@ -10,6 +11,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(morgan("dev"))
 app.use(helmet())
+app.use(cors({ origin: "*" }))
 dotenv.config()
 
 con()
