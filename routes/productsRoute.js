@@ -48,6 +48,13 @@ router.get("/all", async (req, res) => {
   }
 })
 
+// add to cart
+router.post("/add-cart/:id", async (req, res) => {
+  const productId = req.params.id
+
+  const product = []
+})
+
 // delete
 router.delete("/delete/:id", async (req, res) => {
   try {

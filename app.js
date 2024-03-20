@@ -19,10 +19,12 @@ con()
 // route imports
 const userRoute = require("./routes/userRoute")
 const productRoute = require("./routes/productsRoute")
+const cartRoute = require("./routes/cartRoute")
 
 // endpoints
 app.use("/api/v1/users", userRoute)
 app.use("/api/v1/products", productRoute)
+app.use("/api/v1/carts", cartRoute)
 
 //welcome
 app.get("/", async (req, res) => {
