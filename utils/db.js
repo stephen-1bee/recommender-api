@@ -1,19 +1,19 @@
 const mongoose = require("mongoose")
 
-const con = async (req, res) => {
+const con = async () => {
   try {
     await mongoose.connect(
-      process.env.ROOM === "prod"
-        ? process.env.PROD_STRING
-        : process.env.ROOM === "dev"
-        ? process.env.DEV_STRING
+      process.env.ROOM === "dev"
+        ? process.env.DEV_DBSTRING
+        : process.env.ROOM === "prod"
+        ? process.env.PROD_DBSTRING
         : null
     )
 
     if (process.env.ROOM === "dev") {
-      console.log("dev db connection established")
-    } else if (process.env.PROD_STRING) {
-      console.log("prod db connection established")
+      console.log("dev db connected successfully")
+    } else if (process.env.ROOM === "prod") {
+      console.log("remote db connected successfully")
     } else {
       console.log("invalid db connection")
     }
