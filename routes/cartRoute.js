@@ -6,29 +6,42 @@ const mongoose = require("mongoose")
 // add cart
 router.post("/create", async (req, res) => {
   try {
-    // take reqs
+    // Take request parameters
     const { user_id, product_id } = req.body
 
-    //   map to schema
-    const newCart = new cartSchema({
-      user_id,
-      product_id,
-    })
+    // Check if the item already exists in the cart
+    const existingCartItem = await cartSchema.findOne({ user_id, product_id })
 
-    // save
-    const addCart = await newCart.save()
-
-    if (addCart) {
-      res.status(202).json({
-        msg: "cart added successfully",
-        added_cart: addCart,
+    // If the item already exists, send a message indicating it
+    if (existingCartItem) {
+      res.status(400).json({
+        msg: "Item already exists in the cart",
       })
-    } else {
-      res.status(404).json({ msg: "failed to add cart" })
+    }
+    // If the item doesn't exist, add it to the cart
+    else {
+      const newCart = new cartSchema({
+        user_id,
+        product_id,
+      })
+
+      const addCart = await newCart.save()
+
+      if (addCart) {
+        // If the item is successfully added to the cart, send a success message
+        res.status(202).json({
+          msg: "Cart added successfully",
+          added_cart: addCart,
+        })
+      } else {
+        // If there's an error adding the item to the cart, send an error message
+        res.status(500).json({ msg: "Failed to add cart" })
+      }
     }
   } catch (err) {
+    // If there's any other error, send an internal server error message
     console.log(err)
-    res.status(500).json({ msg: "internal server error" })
+    res.status(500).json({ msg: "Internal server error" })
   }
 })
 
