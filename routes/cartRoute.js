@@ -121,7 +121,7 @@ router.get("/user/:id", async (req, res) => {
       },
     ])
 
-    res.status(200).json({ msg: "success", cart })
+    res.status(200).json({ msg: "success", cart_count: cart.length, cart })
   } catch (err) {
     console.log(err)
     res.status(500).json({ msg: "internal server error" })
