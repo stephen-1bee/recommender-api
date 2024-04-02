@@ -2,6 +2,7 @@ const express = require("express")
 const router = express.Router()
 const cartSchema = require("../models/cartSchema")
 const mongoose = require("mongoose")
+const productSchema = require("../models/productSchema")
 
 // add cart
 router.post("/create", async (req, res) => {
@@ -27,19 +28,21 @@ router.post("/create", async (req, res) => {
 
       const addCart = await newCart.save()
 
-      if (addCart) {
-        // If the item is successfully added to the cart, send a success message
+      // increase views
+      const cart = await productSchema.findByIdAndUpdate(product_id, {
+        $inc: { no_cart: 1 },
+      })
+
+      if (addCart && cart) {
         res.status(202).json({
           msg: "Cart added successfully",
           added_cart: addCart,
         })
       } else {
-        // If there's an error adding the item to the cart, send an error message
         res.status(500).json({ msg: "Failed to add cart" })
       }
     }
   } catch (err) {
-    // If there's any other error, send an internal server error message
     console.log(err)
     res.status(500).json({ msg: "Internal server error" })
   }

@@ -7,7 +7,7 @@ const upload = require("../middleware/multer")
 // create
 router.post("/create", upload.single("photo"), async (req, res) => {
   try {
-    const { name, desc, price } = req.body
+    const { name, desc, price, no_cart, views } = req.body
 
     if (!req.file) {
       res.status(404).json({ msg: "photo is required" })
@@ -20,6 +20,8 @@ router.post("/create", upload.single("photo"), async (req, res) => {
       name,
       desc,
       price,
+      no_cart,
+      views,
     })
 
     const product = await newProduct.save()
@@ -48,11 +50,31 @@ router.get("/all", async (req, res) => {
   }
 })
 
-// add to cart
-router.post("/add-cart/:id", async (req, res) => {
-  const productId = req.params.id
+// single product
+router.get("/one/:id", async (req, res) => {
+  try {
+    const productId = req.params.id
 
-  const product = []
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      res.status(401).json({ msg: "product id not found" })
+    }
+
+    const product = await productSchema.findOne({ _id: productId })
+
+    // increase views
+    const view = await productSchema.findByIdAndUpdate(productId, {
+      $inc: { views: 1 },
+    })
+
+    if (product && view) {
+      res.json({ msg: "success", product })
+    } else {
+      res.json({ msg: "failed to get single product" })
+    }
+  } catch (err) {
+    console.log(err)
+    res.status(500).json({ msg: "internal server error" })
+  }
 })
 
 // delete
@@ -105,6 +127,20 @@ router.put("/update/:id", upload.single("photo"), async (req, res) => {
     } else {
       res.status(404).json({ msg: "failed to update product" })
     }
+  } catch (err) {
+    console.log(err)
+    res.status(500).json({ msg: "internal server error" })
+  }
+})
+
+router.get("/recommended", async (req, res) => {
+  try {
+    const recommended = await productSchema.findOne({
+      no_cart: { $gte: 5 },
+      views: { $gte: 5 },
+    })
+
+    res.json({ msg: "success", recommended })
   } catch (err) {
     console.log(err)
     res.status(500).json({ msg: "internal server error" })

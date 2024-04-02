@@ -16,6 +16,16 @@ const productSchema = new mongoose.Schema({
     require: true,
     defualt: null,
   },
+  views: {
+    type: Number,
+    require: true,
+    defualt: 0,
+  },
+  no_cart: {
+    type: Number,
+    require: true,
+    defualt: 0,
+  },
   price: {
     type: Number,
     require: true,
