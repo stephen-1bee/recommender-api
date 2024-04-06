@@ -136,7 +136,7 @@ router.put("/update/:id", upload.single("photo"), async (req, res) => {
 router.get("/recommended", async (req, res) => {
   try {
     const recommended = await productSchema.find({
-      no_cart: { $gte: 5 },
+      no_cart: { $gte: 1 },
       views: { $gte: 5 },
     })
 
