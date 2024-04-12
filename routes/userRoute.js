@@ -19,7 +19,7 @@ router.post(
   ],
   async (req, res) => {
     try {
-      const { username, password, email } = req.body
+      const { username, password, email, amount } = req.body
 
       const usernameExist = await userSchema.findOne({ username })
       const emailExists = await userSchema.findOne({ email })

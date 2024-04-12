@@ -16,6 +16,11 @@ const payments = new mongoose.Schema({
     require: true,
     default: null,
   },
+  amount: {
+    type: Number,
+    require: true,
+    default: 0,
+  },
   dateCreated: {
     type: Date,
     require: true,
