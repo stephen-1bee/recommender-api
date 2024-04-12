@@ -20,11 +20,13 @@ con()
 const userRoute = require("./routes/userRoute")
 const productRoute = require("./routes/productsRoute")
 const cartRoute = require("./routes/cartRoute")
+const paymentRoute = require("./routes/Payment")
 
 // endpoints
 app.use("/api/v1/users", userRoute)
 app.use("/api/v1/products", productRoute)
 app.use("/api/v1/carts", cartRoute)
+app.use("/api/v1/payments", paymentRoute)
 
 //welcome
 app.get("/", async (req, res) => {

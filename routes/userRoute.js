@@ -7,16 +7,16 @@ const mongoose = require("mongoose")
 // create
 router.post(
   "/create",
-  // [
-  //   check("email").isEmail("provide a valid email fornat"),
-  //   check("password")
-  //     .isLength({ min: 8 })
-  //     .withMessage("Password should be at least 8 characters long.")
-  //     .matches(/[a-zA-Z]/)
-  //     .withMessage("Password should contain at least one letter.")
-  //     .matches(/\d/)
-  //     .withMessage("Password should contain at least one numeric digit."),
-  // ],
+  [
+    check("email").isEmail("provide a valid email fornat"),
+    check("password")
+      .isLength({ min: 8 })
+      .withMessage("Password should be at least 8 characters long.")
+      .matches(/[a-zA-Z]/)
+      .withMessage("Password should contain at least one letter.")
+      .matches(/\d/)
+      .withMessage("Password should contain at least one numeric digit."),
+  ],
   async (req, res) => {
     try {
       const { username, password, email } = req.body
@@ -24,12 +24,12 @@ router.post(
       const usernameExist = await userSchema.findOne({ username })
       const emailExists = await userSchema.findOne({ email })
 
-      // const errors = validationResult(req)
+      const errors = validationResult(req)
 
-      // if (!errors.isEmpty()) {
-      //   const error = errors.array().map((err) => err.msg)
-      //   return res.status(401).json({ msg: error[0] })
-      // }
+      if (!errors.isEmpty()) {
+        const error = errors.array().map((err) => err.msg)
+        return res.status(401).json({ msg: error[0] })
+      }
 
       const hashPassword = await bcrypt.hash(password, 10)
 
@@ -147,7 +147,5 @@ router.put("/update/:id", async (req, res) => {
     res.status(500).json({ msg: "internal server error" })
   }
 })
-
-
 
 module.exports = router
