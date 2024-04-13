@@ -10,7 +10,9 @@ router.post(
   "/add-card",
   [
     check("card_no")
-      .isCreditCard()
+      .isNumeric()
+      .withMessage("card number must be a number")
+      .isLength({ min: 16, max: 16 })
       .withMessage("Please provide a valid credit card number"),
     check("expire")
       .matches(/^(0[1-9]|1[0-2])\/\d{2}$/)
