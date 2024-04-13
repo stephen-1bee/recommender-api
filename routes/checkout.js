@@ -106,7 +106,7 @@ router.post("/payment/:productId", async (req, res) => {
         { $set: { amount: balance } }
       )
       res.status(200).json({
-        msg: `Payment made successfully, You have ${balance} in your card `,
+        msg: `Payment made successfully`,
       })
     } else {
       res
