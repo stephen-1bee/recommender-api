@@ -16,6 +16,11 @@ const userSchema = new mongoose.Schema({
     require: true,
     default: null,
   },
+  hasCard: {
+    type: Boolean,
+    require: true,
+    default: false,
+  },
   dateCreated: {
     type: Date,
     require: true,

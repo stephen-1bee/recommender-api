@@ -8,7 +8,7 @@ const mongoose = require("mongoose")
 router.post(
   "/create",
   [
-    check("email").isEmail("provide a valid email fornat"),
+    check("email").isEmail().withMessage("provide a valid email fornat"),
     check("password")
       .isLength({ min: 8 })
       .withMessage("Password should be at least 8 characters long.")
@@ -19,7 +19,7 @@ router.post(
   ],
   async (req, res) => {
     try {
-      const { username, password, email, amount } = req.body
+      const { username, password, email } = req.body
 
       const usernameExist = await userSchema.findOne({ username })
       const emailExists = await userSchema.findOne({ email })
@@ -47,9 +47,8 @@ router.post(
         email,
       })
 
-      const user = await newUser.save()
-
-      if (user) {
+      if (newUser) {
+        const user = await newUser.save()
         res.status(200).json({ msg: "User created successfully", user })
       } else {
         res.status(404).json({ msg: "failed to create user" })

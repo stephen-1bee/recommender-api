@@ -1,12 +1,12 @@
 const mongoose = require("mongoose")
 
-const payments = new mongoose.Schema({
+const checkoutSchema = new mongoose.Schema({
   card_no: {
     type: String,
     require: true,
     default: null,
   },
-  exprire: {
+  expire: {
     type: String,
     require: true,
     default: null,
@@ -21,6 +21,11 @@ const payments = new mongoose.Schema({
     require: true,
     default: 0,
   },
+  user_id: {
+    type: String,
+    require: true,
+    default: null,
+  },
   dateCreated: {
     type: Date,
     require: true,
@@ -33,4 +38,4 @@ const payments = new mongoose.Schema({
   },
 })
 
-module.exports = mongoose.model("payments", payments, "payments")
+module.exports = mongoose.model("payments", checkoutSchema, "payments")
