@@ -48,7 +48,7 @@ router.post(
 
       if (newCard) {
         const save_card = await newCard.save()
-        res.status(200).json({ msg: "Card saved successfully" })
+        res.status(200).json({ msg: "Card saved successfully", save_card })
       } else {
         res.status(4040).json({ msg: "failed to add card, Try again " })
       }
