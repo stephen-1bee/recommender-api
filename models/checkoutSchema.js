@@ -11,6 +11,11 @@ const checkoutSchema = new mongoose.Schema({
     require: true,
     default: null,
   },
+  product_price: {
+    type: Number,
+    require: true,
+    default: 0,
+  },
   cvc: {
     type: String,
     require: true,

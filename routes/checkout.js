@@ -79,7 +79,7 @@ router.get("/user/:id", async (req, res) => {
 // make payment
 router.post("/payment/:productId", async (req, res) => {
   try {
-    const { user_id } = req.body
+    const { user_id, product_price } = req.body
     const productId = req.params.productId
 
     if (!mongoose.Types.ObjectId.isValid(productId)) {
@@ -93,12 +93,10 @@ router.post("/payment/:productId", async (req, res) => {
     const user_card = await checkoutSchema.findOne({ user_id: user_id })
     const user_amount = user_card.amount
     // find product
-    const product = await productSchema.findOne({ _id: productId })
-    const product_amount = product.price
 
     // // deduct
-    if (user_amount > product_amount) {
-      const balance = user_amount - product_amount
+    if (user_amount > product_price) {
+      const balance = user_amount - product_price
 
       // update user card amount
       const updateUserAmount = await checkoutSchema.findByIdAndUpdate(
