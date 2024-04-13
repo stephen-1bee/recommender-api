@@ -6,33 +6,56 @@ const mongoose = require("mongoose")
 const productSchema = require("../models/productSchema")
 
 // add card
-router.post("/add-card", async (req, res) => {
-  try {
-    const { user_id, card_no, expire, cvc, amount } = req.body
+router.post(
+  "/add-card",
+  [
+    check("card_no")
+      .isCreditCard()
+      .withMessage("Please provide a valid credit card number"),
+    check("expire")
+      .matches(/^(0[1-9]|1[0-2])\/\d{2}$/)
+      .withMessage("Please provide a valid expiration date in MM/YY format"),
+    check("cvc")
+      .isLength({ min: 3, max: 3 })
+      .withMessage("Please provide a valid CVC"),
+    check("amount").isNumeric().withMessage("Please provide a valid amount"),
+  ],
+  async (req, res) => {
+    try {
+      const { user_id, card_no, expire, cvc, amount } = req.body
 
-    const newCard = new checkoutSchema({
-      user_id,
-      card_no,
-      expire,
-      cvc,
-      amount,
-    })
+      const newCard = new checkoutSchema({
+        user_id,
+        card_no,
+        expire,
+        cvc,
+        amount,
+      })
 
-    const hasCard = await userSchema.findByIdAndUpdate(user_id, {
-      $set: { hasCard: true },
-    })
+      //
+      const errors = validationResult(req)
 
-    if (newCard) {
-      const save_card = await newCard.save()
-      res.status(200).json({ msg: "Card saved successfully" })
-    } else {
-      res.status(4040).json({ msg: "failed to add card, Try again " })
+      if (!errors.isEmpty()) {
+        const error = errors.array().map((err) => err.msg)
+        return res.status(401).json({ msg: error[0] })
+      }
+
+      const hasCard = await userSchema.findByIdAndUpdate(user_id, {
+        $set: { hasCard: true },
+      })
+
+      if (newCard) {
+        const save_card = await newCard.save()
+        res.status(200).json({ msg: "Card saved successfully" })
+      } else {
+        res.status(4040).json({ msg: "failed to add card, Try again " })
+      }
+    } catch (err) {
+      console.log(err)
+      res.status(500).json({ msg: "internal server error" })
     }
-  } catch (err) {
-    console.log(err)
-    res.status(500).json({ msg: "internal server error" })
   }
-})
+)
 
 // get card by user id
 router.get("/user/:id", async (req, res) => {
@@ -125,6 +148,27 @@ router.put("/card/update/:id", async (req, res) => {
       res.status(200).json({ msg: "card updated successfully" })
     } else {
       res.status(404).json({ msg: "failed to update card" })
+    }
+  } catch (err) {
+    console.log(err)
+  }
+})
+
+// delete
+router.delete("/delete/:id", async (req, res) => {
+  try {
+    const cardId = req.params.id
+
+    if (!mongoose.Types.ObjectId.isValid(cardId)) {
+      return res.status(401).json({ msg: "card id not found" })
+    }
+
+    const card = await checkoutSchema.findByIdAndDelete(cardId)
+
+    if (card) {
+      res.status(200).json({ msg: "card deleted successfully", card })
+    } else {
+      res.status(404).json({ msg: "failed to delete user" })
     }
   } catch (err) {
     console.log(err)
