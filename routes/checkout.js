@@ -129,28 +129,53 @@ router.get("/all", async (req, res) => {
 })
 
 // update user card
-router.put("/card/update/:id", async (req, res) => {
-  try {
-    const cardId = req.params.id
+router.put(
+  "/card/update/:id",
+  [
+    check("card_no")
+      .isNumeric()
+      .withMessage("card number must be a number")
+      .isLength({ min: 16, max: 16 })
+      .withMessage("Please provide a valid credit card number"),
+    check("expire")
+      .matches(/^(0[1-9]|1[0-2])\/\d{2}$/)
+      .withMessage("Please provide a valid expiration date in MM/YY format"),
+    check("cvc")
+      .isLength({ min: 3, max: 3 })
+      .withMessage("Please provide a valid CVC"),
+    check("amount").isNumeric().withMessage("Please provide a valid amount"),
+  ],
+  async (req, res) => {
+    try {
+      const cardId = req.params.id
 
-    if (!mongoose.Types.ObjectId.isValid(cardId)) {
-      res.status(401).json({ msg: "invalid card id" })
-    }
-    const { card_no, expire, cvc, amount } = req.body
+      if (!mongoose.Types.ObjectId.isValid(cardId)) {
+        res.status(401).json({ msg: "invalid card id" })
+      }
+      const { card_no, expire, cvc, amount } = req.body
 
-    const updateCard = await checkoutSchema.updateOne(
-      { _id: cardId },
-      { $set: { card_no, expire, cvc, amount } }
-    )
-    if (updateCard.modifiedCount === 1) {
-      res.status(200).json({ msg: "card updated successfully" })
-    } else {
-      res.status(404).json({ msg: "failed to update card" })
+      //
+      const errors = validationResult(req)
+
+      if (!errors.isEmpty()) {
+        const error = errors.array().map((err) => err.msg)
+        return res.status(401).json({ msg: error[0] })
+      }
+
+      const updateCard = await checkoutSchema.updateOne(
+        { _id: cardId },
+        { $set: { card_no, expire, cvc, amount } }
+      )
+      if (updateCard.modifiedCount === 1) {
+        res.status(200).json({ msg: "card updated successfully" })
+      } else {
+        res.status(404).json({ msg: "failed to update card" })
+      }
+    } catch (err) {
+      console.log(err)
     }
-  } catch (err) {
-    console.log(err)
   }
-})
+)
 
 // delete
 router.delete("/delete/:id", async (req, res) => {
