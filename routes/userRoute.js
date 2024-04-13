@@ -147,4 +147,13 @@ router.put("/update/:id", async (req, res) => {
   }
 })
 
+router.get("/one/:id", async (req, res) => {
+  try {
+    const user = await userSchema.findOne({ _id: req.params.id })
+    res.json({ msg: "success", user })
+  } catch (err) {
+    console.log(err)
+  }
+})
+
 module.exports = router
