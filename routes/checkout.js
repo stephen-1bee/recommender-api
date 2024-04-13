@@ -111,8 +111,6 @@ router.post("/payment/:productId", async (req, res) => {
         .status(401)
         .json({ msg: "insufficient balance, Top up card to purchase" })
     }
-
-    // res.json({ user_amount, product_amount })
   } catch (err) {
     console.log(err)
     res.status(404).json({ msg: "internal server error" })

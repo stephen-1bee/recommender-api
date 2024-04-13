@@ -129,11 +129,9 @@ router.put("/update/:id", async (req, res) => {
 
     const currentUser = await userSchema.findOne({ _id: userId })
 
-    const comp = await bcrypt.hash(password, 10)
-
     const user = await userSchema.updateOne(
       { _id: userId },
-      { $set: { email, username, password: comp } }
+      { $set: { email, username } }
     )
 
     if (user.modifiedCount === 1) {
